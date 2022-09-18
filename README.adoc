@@ -1,0 +1,14 @@
+= taskmaker.nvim
+Creating taskwarrior tasks from asciidoc checklists. ✅
+
+Documentation in progress 🙃
+https://github.com/todotxt/todo.txt-cli[todotxt/todo.txt-cli: ☑️ A simple and extensible shell script for managing your todo.txt file.]
+
+-- TODO
+-- annotation for multiline
+-- links from task can be cut and add to annotation
+-- maybe one line task with metadata - it will be recognized one sub tasks wont inherit from the parent task
+-- multi lists, now it can add few lists but they will share the same contexts and projects, add tasklist separator
+
+Known issues:
+Adding task from the first selection could not work. 
