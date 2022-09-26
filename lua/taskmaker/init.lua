@@ -1,6 +1,7 @@
 local parser = require 'taskmaker.parser'
 local selector = require 'taskmaker.selector'
 local todo = require 'taskmaker.todo'
+local editor = require 'taskmaker.editor'
 local taskwarrior = require 'taskmaker.taskwarrior'
 
 local M = {}
@@ -52,5 +53,9 @@ function M.addTasks()
 	if config.feedback then
 		vim.notify(feedbackMsg, vim.log.levels.INFO)
 	end
+end
+
+function M.toggleTask()
+	editor.toggle()
 end
 return M
