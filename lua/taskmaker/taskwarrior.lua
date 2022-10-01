@@ -1,5 +1,8 @@
 local M = {}
 
+local specialShellChars = '([??$?!?\'?(?)?;?`?*?{?}?<?>?|?&?%?#?~?@?%[?%]?\\?"?]+)'
+local function escape(c) return '\\' ..  c end
+
 local function preparePriority(priorities)
 	for i = 1, #priorities do
 		local priority = string.upper(priorities[i])
@@ -33,13 +36,16 @@ function M.addTasks(checklist, defaultContext)
 	local tasks = checklist.tasks
 	for i = #tasks, 1, -1 do
 		local task = tasks[i]
+		local description = task.description:gsub(specialShellChars, escape)
 		local depends = ' depends:' .. table.concat(task.children, ',')
 		vim.fn.system 'task context none'
-		vim.fn.system('task add ' .. defaultContext .. metadataCmd .. task.description .. depends)
+		vim.fn.system('task add ' .. defaultContext .. metadataCmd .. description .. depends)
 		local uuid = vim.fn.system('task +LATEST uuids'):gsub('\n', '')
 
-		if task.annotation and task.annotation ~= '' then
-			vim.fn.system('task annotate "' .. task.annotation .. '" ' .. uuid)
+		local annotation = task.annotation
+		if annotation and annotation ~= '' then
+			annotation = annotation:gsub(specialShellChars, escape)
+			vim.fn.system('task ' .. uuid .. ' annotate ' .. annotation)
 		end
 		local parentIndex = task.parent
 		if parentIndex ~= 0 then
