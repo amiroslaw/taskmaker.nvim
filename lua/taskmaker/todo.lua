@@ -1,8 +1,8 @@
 local M = {}
 
 local function getPriority(priority)
-	if #priority ~= 0 then
-		return '(' .. string.upper(priority[1]) .. ') '
+	if priority ~= '' then
+		return '(' .. string.upper(priority) .. ') '
 	end
 	return ''
 end

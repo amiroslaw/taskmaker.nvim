@@ -3,12 +3,9 @@ local M = {}
 local specialShellChars = '([??$?!?\'?(?)?;?`?*?{?}?<?>?|?&?%?#?~?@?%[?%]?\\?"?]+)'
 local function escape(c) return '\\' ..  c end
 
-local function preparePriority(priorities)
-	for i = 1, #priorities do
-		local priority = string.upper(priorities[i])
-		if priority == 'H' or priority == 'M' or priority == 'L' then
-			return priority
-		end
+local function preparePriority(priority)
+	if priority ~= '' and (priority == 'H' or priority == 'M' or priority == 'L') then
+		return string.upper(priority)
 	end
 	return ''
 end
@@ -23,7 +20,9 @@ local function getMetadataCmd(checklist)
 	if checklist.priority then
 		priority = priority .. preparePriority(checklist.priority)
 	end
-	return ' ' .. projects .. contexts .. priority .. ' '
+	local due = ' due:' .. checklist.due
+	local wait = ' wait:' .. checklist.wait
+	return ' ' .. projects .. contexts .. priority .. due .. wait .. ' '
 end
 
 function M.addTasks(checklist, defaultContext)

@@ -9,11 +9,20 @@ local function parseTitle(str, prefix)
 	return meta
 end
 
+local function reduceToOne(tab)
+	if #tab ~= 0 then
+		return tab[1]
+	end
+	return ''
+end
+
 local function getMetadata(line, prefixes)
 	local contexts = parseTitle(line, prefixes.context)
 	local projects = parseTitle(line, prefixes.project)
 	local priority = parseTitle(line, prefixes.priority)
-	return contexts, projects, priority
+	local wait = parseTitle(line, prefixes.wait)
+	local due = parseTitle(line, prefixes.due)
+	return contexts, projects, reduceToOne(priority), reduceToOne(due), reduceToOne(wait)
 end
 
 local function getHierarchyLevel(line, format, spaces)
@@ -46,7 +55,7 @@ function M.getChecklist(lines, config)
 	for _, line in ipairs(lines) do
 		local taskFormat = getTaskFormat(line)
 		if line:match '^%.%a' then
-			OUT.contexts, OUT.projects, OUT.priority = getMetadata(line, config.prefix)
+			OUT.contexts, OUT.projects, OUT.priority, OUT.due, OUT.wait = getMetadata(line, config.prefix)
 		end
 		if taskFormat then
 			local hierarchy = getHierarchyLevel(line, taskFormat, config.spaces_number)

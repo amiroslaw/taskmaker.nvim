@@ -15,6 +15,8 @@ local config = {
 		project = '#',
 		context = '+',
 		priority = '!',
+		wait = 'wait:',
+		due = 'due:',
 		annotation = 'ann:',
 	},
 }
