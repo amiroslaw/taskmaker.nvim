@@ -4,8 +4,9 @@ local specialShellChars = '([??$?!?\'?(?)?;?`?*?{?}?<?>?|?&?%?#?~?@?%[?%]?\\?"?]
 local function escape(c) return '\\' ..  c end
 
 local function preparePriority(priority)
+	priority =  string.upper(priority)
 	if priority ~= '' and (priority == 'H' or priority == 'M' or priority == 'L') then
-		return string.upper(priority)
+		return priority
 	end
 	return ''
 end

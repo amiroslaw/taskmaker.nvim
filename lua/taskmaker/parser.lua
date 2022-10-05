@@ -48,7 +48,7 @@ local function getTaskFormat(line)
 end
 
 function M.getChecklist(lines, config)
-	local OUT = { tasks = {}, contexts = {}, projects = {} }
+	local OUT = { tasks = {}, contexts = {}, projects = {}, priority = '', due = '', wait = '' }
 	local parentHierarchy = 1
 	local parentIndex = 0
 	local index = 0
