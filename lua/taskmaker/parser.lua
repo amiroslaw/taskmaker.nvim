@@ -47,6 +47,25 @@ local function getTaskFormat(line)
 	end
 end
 
+local function parseAnnotation(task, prefix)
+	local _, splitDesc = task:find ']%s'
+	local description = task:sub(splitDesc + 1, #task)
+	local annotation = ''
+
+	local startIndexAnno, endIndexAnno = task:find(prefix)
+	if startIndexAnno and endIndexAnno then
+		annotation = task:sub(endIndexAnno + 1, #task)
+		description = task:sub(1, startIndexAnno - 2)
+		return description, annotation
+	end
+	local urlPattern = '(https?://([%w_.~!*:@&+$/?%%#-]-)(%w[-.%w]*%.)(%w%w%w?%w?)(:?)(%d*)(/?)([%w_.~!*:@&+$/?%%#=-]*))'
+	for match in description:gmatch(urlPattern) do
+		annotation = annotation .. ' ' .. match
+		description = description:gsub(match, '')
+	end
+	return description, annotation
+end
+
 function M.getChecklist(lines, config)
 	local OUT = { tasks = {}, contexts = {}, projects = {}, priority = '', due = '', wait = '' }
 	local parentHierarchy = 1
@@ -75,14 +94,7 @@ function M.getChecklist(lines, config)
 					end
 				end
 			end
-			local _, splitDesc = line:find ']%s'
-			local description = line:sub(splitDesc + 1, #line)
-			local startIndexAnno, endIndexAnno = description:find(config.prefix.annotation)
-			local annotation = ''
-			if startIndexAnno and endIndexAnno then
-				annotation = description:sub(endIndexAnno + 1, #description)
-				description = description:sub(1, startIndexAnno - 2)
-			end
+			local description, annotation = parseAnnotation(line, config.prefix.annotation)
 			table.insert(OUT.tasks, {
 				parent = parentIndex,
 				hierarchy = hierarchy,
