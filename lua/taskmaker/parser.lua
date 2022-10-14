@@ -52,17 +52,17 @@ local function parseAnnotation(task, prefix)
 	local description = task:sub(splitDesc + 1, #task)
 	local annotation = ''
 
-	local startIndexAnno, endIndexAnno = task:find(prefix)
+	local startIndexAnno, endIndexAnno = description:find(prefix)
 	if startIndexAnno and endIndexAnno then
-		annotation = task:sub(endIndexAnno + 1, #task)
-		description = task:sub(1, startIndexAnno - 2)
+		annotation = description:sub(endIndexAnno + 1, #description)
+		description = description:sub(1, startIndexAnno - 2)
 		return description, annotation
 	end
 	local urlPattern = '(https?://([%w_.~!*:@&+$/?%%#-]-)(%w[-.%w]*%.)(%w%w%w?%w?)(:?)(%d*)(/?)([%w_.~!*:@&+$/?%%#=-]*))'
 	for match in description:gmatch(urlPattern) do
 		annotation = annotation .. ' ' .. match
-		description = description:gsub(match, '')
 	end
+	description = description:gsub(urlPattern, '')
 	return description, annotation
 end
 
