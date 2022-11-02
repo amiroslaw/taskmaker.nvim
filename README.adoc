@@ -1,14 +1,103 @@
-= taskmaker.nvim
-Creating taskwarrior tasks from asciidoc checklists. ✅
+ifdef::env-github[]
+:imagesdir: https://github.com/amiroslaw/repo-assets/raw/master/
+:toc2:
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
-Documentation in progress 🙃
-https://github.com/todotxt/todo.txt-cli[todotxt/todo.txt-cli: ☑️ A simple and extensible shell script for managing your todo.txt file.]
+ _____         _                    _             
+|_   _|_ _ ___| | ___ __ ___   __ _| | _____ _ __ 
+  | |/ _` / __| |/ / '_ ` _ \ / _` | |/ / _ \ '__|
+  | | (_| \__ \   <| | | | | | (_| |   <  __/ |   
+  |_|\__,_|___/_|\_\_| |_| |_|\__,_|_|\_\___|_|   
+                                                  
 
-=== TODO
+==  taskmaker.nvim ✅
+This nvim plugin can create https://taskwarrior.org[Taskwarrior] or https://github.com/todotxt/todo.txt-cli[todo.txt] tasks from asciidoc or markdown checklists. I took the idea from the https://github.com/tools-life/taskwiki[taskwiki], but my plugin doesn't require additional dependencies and `VimWiki`. Taskmaker is smaller and restricted only to creating tasks from the selected text.
 
-* [ ] links from task can be cut and add to annotation
-* [ ] maybe one line task with metadata - it will be recognized one sub tasks wont inherit from the parent task
-* [ ] multi lists, now it can add few lists but they will share the same contexts and projects, add tasklist separator
+WARNING: Markdown format and todo.txt are not well tested because I use a different setup. 🙃
 
-Known issues:
-Adding task from the first selection could not work. 
+=== Features
+
+* Adding multiple tasks at once.
+* Group of the tasks can inherent tags and metadata. 
+* Extra function for toggling tasks as done or undone.
+* Nested tasks.
+* Taskwarrior dependency, any child tasks being marked as dependencies of the parent tasks. (only taskwarrior)
+* URLs are automatically cut and added to the annotation. (only taskwarrior)
+
+=== How to use
+Select text and run `TaskmakerAddTasks` command. Tags from the title (the first line that starts with a dot followed by a character) will be added to each task. The task starts with a hyphen or an asterisk. Empty lines are omitted.
+
+WARNING: Prefixes (doesn't apply to `annotation`) are only recognized on the title. For individual task you have to provide normal metadata. 
+
+image::https://github.com/amiroslaw/repo-assets/raw/master/taskmaker/taskmaker.gif[presentation]
+
+----
+.asciidoc format +context-name #project-name !L (priority low)
+* [ ] task 1
+** [ ] task 1.1
+*** [ ] task 1.1.1
+* [ ] task 2
+
+.markdown format (indents have 2 spaces) +context-name #project-name !F (priority F)
+- [ ] task 1
+  - [ ] task 1.1
+    - [ ] task 1.1.1
+- [ ] task 2
+
+.taskwarrior metadata example #project-name due:eom
+* [ ] extra project tag project:projectB
+* [ ] overrated due due:tomorrow
+* [ ] task with an annotation ann: annotation's text
+* [ ] auto detected url  https://www.google.com  the url will be added to the annotation
+* [ ] task with priority priority:H
+----
+
+More examples are available in the `test-cases.adoc` file on the `dev` branch.
+
+=== Configuration
+The configuration scheme is quite self-explanatory. If you use `todo.txt`, you have to change the `app` variable. For `sync` you have to set up synchronization in taskwarrior. The prefixes `wait`, `due` and `annotation` are available only for taskwarrior.
+
+.Default configuration 
+[source,lua]
+----
+local config = {
+	app = 'taskwarrior', -- {'taskwarrior', 'todo.txt'}
+	feedback = false, -- confirmation message feedback
+	default_context = '', -- useful for the GTD inbox convention
+	sync = false, -- synchronization (only for taskwarrior)
+	spaces_number = 2, -- for markdown's nested checklist
+	prefix = {
+		project = '#',
+		context = '+',
+		priority = '!',
+		wait = 'wait:',
+		due = 'due:',
+		annotation = 'ann:',
+	},
+}
+
+----
+
+Taskmaker provides only two commands `TaskmakerAddTasks` and `TaskmakerToggle`.
+
+	vim.api.nvim_set_keymap('v','<LocalLeader>t', '<cmd>TaskmakerAddTasks <CR>')
+	vim.api.nvim_set_keymap('n','<LocalLeader>x', '<cmd>TaskmakerToggle <CR>')
+
+=== Todo and remarks
+
+* [ ] Known issue: Adding tasks from the first selection could not work. I’m not an expert in nvim, I just don’t know where the problem is.
+* [ ] Range selection doesn't work.
+* [ ] Vim documentation.
+
+=== References
+
+* https://taskwarrior.org[Taskwarrior]
+* https://github.com/todotxt/todo.txt-cli[todo.txt-cli: ☑️ A simple and extensible shell script for managing your todo.txt file.]
+* https://github.com/tools-life/taskwiki[taskwiki: Proper project management with Taskwarrior in vim.]
+* https://github.com/amiroslaw/TimeFX[TimeFX: GUI application for presenting taskwarrior data on charts.]
+* https://kdheepak.com/taskwarrior-tui/[taskwarrior-tui - A terminal user interface for taskwarrior]
