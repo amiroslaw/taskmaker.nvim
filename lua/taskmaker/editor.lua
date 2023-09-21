@@ -6,7 +6,7 @@ function M.toggle()
 
 	local substitution = line
 	if line:match '^*+%s%[%s]' or line:match '^\t*%s*%-+%s%[%s]' then
-		substitution = line:gsub('%s%[%s]', ' [X]')
+		substitution = line:gsub('%s%[%s]', ' [x]')
 	elseif line:match '^\t*%s*%-+%s%[x]' or line:match '^*+%s%[x?X?]' then
 		substitution = line:gsub('%s%[x?X?]', ' [ ]')
 	end
